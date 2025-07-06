@@ -1,0 +1,60 @@
+﻿# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+# Uncomment if you have packages folder locally
+# packages/
+
+# ASP.NET Core runtime files
+appsettings.Development.json
+
+# ASP.NET publish output
+publish/
+
+# Rider files
+*.DotSettings.user
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Resharper
+_ReSharper*/
+*.ReSharper.*
+
+# Dotnet tools
+*.dotnet_tool.*
+
+# npm packages (if you accidentally commit client stuff here)
+node_modules/
+
+# dotenv files with secrets (if any)
+.env
+
+# Docker files (optional, if you want to ignore generated docker-related files)
+docker-compose.override.yml
+
+# Others
+*.pidb
+*.svclog
