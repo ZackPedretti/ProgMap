@@ -1,0 +1,8 @@
+services:
+  progmapapi:
+    build: ./ProgMapApi
+    ports:
+      - "440:440"
+    environment:
+      - ASPNETCORE_URLS=http://+:440
+      - ASPNETCORE_ENVIRONMENT=Development
