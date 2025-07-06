@@ -1,41 +1,25 @@
-var builder = WebApplication.CreateBuilder(args);
+using ProgMapApi;
+using Npgsql;
+using dotenv.net;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+var builder = WebApplication.CreateBuilder(args);
+DotEnv.Load(); // loads from .env
+
+var connStr = $"Host={Environment.GetEnvironmentVariable("PG_HOST")};" +
+              $"Port={Environment.GetEnvironmentVariable("PG_PORT")};" +
+              $"Database={Environment.GetEnvironmentVariable("PG_DB")};" +
+              $"Username={Environment.GetEnvironmentVariable("PG_USER")};" +
+              $"Password={Environment.GetEnvironmentVariable("PG_PASSWORD")}";
+
+Console.WriteLine(connStr);
+builder.Services.AddNpgsqlDataSource(
+    connStr
+);
 
 var app = builder.Build();
+// app.UseHttpsRedirection();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapBandsEndpoints();
+app.MapUpdateEndpoint();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

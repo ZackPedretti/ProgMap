@@ -9,6 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ProgMapApi.csproj", "./"]
 RUN dotnet restore "ProgMapApi.csproj"
+RUN dotnet add package Npgsql
+RUN dotnet add package Npgsql.DataSource
 COPY . .
 WORKDIR "/src/"
 RUN dotnet build "./ProgMapApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -20,4 +22,5 @@ RUN dotnet publish "./ProgMapApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ProgMapApi.dll"]
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://+:440"]
+

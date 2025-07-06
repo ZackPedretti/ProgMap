@@ -1,8 +1,35 @@
 services:
   progmapapi:
-    build: ./ProgMapApi
+    image: mcr.microsoft.com/dotnet/sdk:9.0
     ports:
       - "440:440"
     environment:
       - ASPNETCORE_URLS=http://+:440
-      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+    volumes:
+      - ./ProgMapApi:/src
+    working_dir: /src
+    command: dotnet watch run --urls=http://+:440
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "${DB_PORT}:5432"
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  pgdata:
