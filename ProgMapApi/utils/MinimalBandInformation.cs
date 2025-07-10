@@ -1,6 +1,6 @@
-﻿namespace ProgMapApi;
+﻿namespace ProgMapApi.utils;
 
-public class MinimalBandInformation(int id, float lat, float lon)
+public abstract class MinimalBandInformation(int id, float lat, float lon)
 {
     public readonly int Id = id;
     public readonly float Lat = lat;

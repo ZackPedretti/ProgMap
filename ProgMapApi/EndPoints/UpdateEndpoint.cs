@@ -1,5 +1,6 @@
-﻿namespace ProgMapApi;
-using Npgsql;
+﻿using Npgsql;
+
+namespace ProgMapApi.EndPoints;
 
 public static class UpdateEndpoint
 {

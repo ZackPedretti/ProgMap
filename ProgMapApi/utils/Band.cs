@@ -1,6 +1,6 @@
-﻿namespace ProgMapApi;
+﻿namespace ProgMapApi.utils;
 
-public class Band(int id, string name, float lat, float lon, string wiki, string lastfm, string discogs)
+public abstract class Band(int id, string name, float lat, float lon, string wiki, string lastfm, string discogs)
 {
     public readonly int Id = id;
     public readonly string Name = name;

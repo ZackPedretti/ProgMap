@@ -1,8 +1,10 @@
-﻿namespace ProgMapApi;
+﻿using ProgMapApi.DbHandler;
+
+namespace ProgMapApi.EndPoints;
 
 public static class BandEndpoint
 {
-    public static void MapBandsEndpoints(this WebApplication app)
+    public static void MapBandsEndpoints(this WebApplication app, IDbHandler dbHandler)
     {
         app.MapGet("/band-positions", () =>
             {
@@ -13,5 +15,8 @@ public static class BandEndpoint
                 return bands;
             })
             .WithName("GetBandPositions");
+        
+        app.MapGet("/band-names", async () => await dbHandler.GetAllBandNames())
+        .WithName("GetBandNames");
     }
 }

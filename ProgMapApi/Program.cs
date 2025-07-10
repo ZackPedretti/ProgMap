@@ -1,6 +1,8 @@
 using ProgMapApi;
 using Npgsql;
 using dotenv.net;
+using ProgMapApi.DbHandler;
+using ProgMapApi.EndPoints;
 
 var builder = WebApplication.CreateBuilder(args);
 DotEnv.Load(); // loads from .env
@@ -11,15 +13,12 @@ var connStr = $"Host={Environment.GetEnvironmentVariable("PG_HOST")};" +
               $"Username={Environment.GetEnvironmentVariable("PG_USER")};" +
               $"Password={Environment.GetEnvironmentVariable("PG_PASSWORD")}";
 
-Console.WriteLine(connStr);
-builder.Services.AddNpgsqlDataSource(
-    connStr
-);
+IDbHandler dbHandler = new PgDbHandler(connStr);
 
 var app = builder.Build();
 // app.UseHttpsRedirection();
 
-app.MapBandsEndpoints();
+app.MapBandsEndpoints(dbHandler);
 app.MapUpdateEndpoint();
 
 app.Run();
