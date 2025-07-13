@@ -45,21 +45,11 @@ public class MusicBrainzBandFetcher :  IBandFetcher
         
         var q = new Query();
         var results = await q.FindArtistsAsync($"tag:\"{keyword}\"", limit: 100);
-        
-        foreach (var result in results.Results)
-        {
-            var mbArtist = result.Item;
-            if (mbArtist is null)
-            {
-                continue;
-            }
-            var artist = BuildArtistFromArtistObject(mbArtist);
-            if (artist != null)
-            {
-                artists.Add(artist);
-            }
-        }
-        
+
+        artists.AddRange(results.Results.Select(result => result.Item)
+            .Select(BuildArtistFromArtistObject)
+            .OfType<Artist>());
+
         return artists.ToArray();
     }
 
