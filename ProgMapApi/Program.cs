@@ -20,5 +20,6 @@ var app = builder.Build();
 
 app.MapBandsEndpoints(dbHandler);
 app.MapUpdateEndpoint();
+// app.MapTestEndpoint();
 
 app.Run();

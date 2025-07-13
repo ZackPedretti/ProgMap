@@ -1,16 +1,86 @@
-﻿using ProgMapApi.utils;
+﻿using MetaBrainz.MusicBrainz;
+using MbArtist = MetaBrainz.MusicBrainz.Interfaces.Entities.IArtist;
+using ProgMapApi.utils;
 
 namespace ProgMapApi.BandFetcher;
 
 public class MusicBrainzBandFetcher :  IBandFetcher
 {
-    public Band[] GetAllBands()
+    public Task<Artist[]> GetAllBands()
     {
-        throw new NotImplementedException();
+        return GetBandsByKeyword("progressive metal");
     }
 
-    public Band GetBand(int id)
+    public async Task<Artist?> GetBandByName(string name)
     {
-        throw new NotImplementedException();
+        var q = new Query();
+        var results = await q.FindArtistsAsync(name);
+
+        var artist = results.Results[0].Item;
+        var beginAreaString = artist.BeginArea?.ToString();
+        
+        if (artist.Name == null || beginAreaString == null || artist.Country == null)
+        {
+            return null;
+        }
+        
+        Console.WriteLine($"id: {artist.Id} \nName: {artist.Name}");
+
+        return new Artist(
+            artist.Id.ToString(),
+            artist.Name,
+            new Position(0, 0),
+            artist.Country,
+            beginAreaString,
+            null,
+            null,
+            null
+            );
+    }
+
+    private async Task<Artist[]> GetBandsByKeyword(string keyword)
+    {
+        
+        List<Artist> artists = [];
+        
+        var q = new Query();
+        var results = await q.FindArtistsAsync($"tag:\"{keyword}\"", limit: 100);
+        
+        foreach (var result in results.Results)
+        {
+            var mbArtist = result.Item;
+            if (mbArtist is null)
+            {
+                continue;
+            }
+            var artist = BuildArtistFromArtistObject(mbArtist);
+            if (artist != null)
+            {
+                artists.Add(artist);
+            }
+        }
+        
+        return artists.ToArray();
+    }
+
+    private Artist? BuildArtistFromArtistObject(MbArtist artist)
+    {
+        var beginAreaString = artist.BeginArea?.ToString();
+        
+        if (artist.Name == null || beginAreaString == null || artist.Country == null)
+        {
+            return null;
+        }
+
+        return new Artist(
+            artist.Id.ToString(),
+            artist.Name,
+            new Position(0, 0),
+            artist.Country,
+            beginAreaString,
+            null,
+            null,
+            null
+        );
     }
 }

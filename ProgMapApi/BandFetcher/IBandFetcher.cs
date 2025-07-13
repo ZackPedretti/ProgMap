@@ -4,6 +4,6 @@ namespace ProgMapApi.BandFetcher;
 
 public interface IBandFetcher
 {
-    Band[] GetAllBands();
-    Band GetBand(int id);
+    Task<Artist[]> GetAllBands();
+    Task<Artist?> GetBandByName (string name);
 }

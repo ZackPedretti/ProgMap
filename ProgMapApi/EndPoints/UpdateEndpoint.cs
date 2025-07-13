@@ -1,4 +1,4 @@
-﻿using Npgsql;
+﻿using ProgMapApi.utils;
 
 namespace ProgMapApi.EndPoints;
 
@@ -6,15 +6,15 @@ public static class UpdateEndpoint
 {
     public static void MapUpdateEndpoint(this WebApplication app)
     {
-        app.MapGet("/update", async (NpgsqlDataSource dataSource) =>
+        app.MapGet("/update", async () =>
             {
-                var addedBands = await UpdateDb(dataSource);
+                List<Artist> addedBands = [];
                 return Results.Ok(addedBands);
             })
             .WithName("Update");
     }
 
-    public static async Task<List<object>> UpdateDb(NpgsqlDataSource dataSource)
+    public static async Task<List<object>> UpdateDb()
     {
         var bands = new[]
         {
@@ -23,29 +23,6 @@ public static class UpdateEndpoint
         };
         
         var added = new List<object>();
-
-        using var conn = await dataSource.OpenConnectionAsync();
-        foreach (var band in bands)
-        {
-            using var cmd = new NpgsqlCommand(
-                @"INSERT INTO band (name, lat, lon, wiki, lastfm, discogs)
-                  VALUES (@name, @lat, @lon, @wiki, @lastfm, @discogs)
-                  ON CONFLICT (name) DO NOTHING
-                  RETURNING id;", conn);
-
-            cmd.Parameters.AddWithValue("name", band.Name);
-            cmd.Parameters.AddWithValue("lat", band.Lat);
-            cmd.Parameters.AddWithValue("lon", band.Lon);
-            cmd.Parameters.AddWithValue("wiki", band.Wiki ?? "");
-            cmd.Parameters.AddWithValue("lastfm", band.LastFm ?? "");
-            cmd.Parameters.AddWithValue("discogs", band.Discogs ?? "");
-
-            var id = await cmd.ExecuteScalarAsync();
-            if (id != null)
-            {
-                added.Add(new { id, band.Name });
-            }
-        }
 
         return added;
     }

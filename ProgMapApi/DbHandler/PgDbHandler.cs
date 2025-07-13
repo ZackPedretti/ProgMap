@@ -32,7 +32,7 @@ public class PgDbHandler(string connStr) : IDbHandler
         return [];
     }
 
-    public void InsertBands(Band[] bands)
+    public void InsertBands(Artist[] bands)
     {
         throw new NotImplementedException();
     }
@@ -42,12 +42,12 @@ public class PgDbHandler(string connStr) : IDbHandler
         throw new NotImplementedException();
     }
 
-    public Band GetBand(MinimalBandInformation band)
+    public Artist GetBand(MinimalBandInformation band)
     {
         throw new NotImplementedException();
     }
 
-    public Band GetBand(int band)
+    public Artist GetBand(int band)
     {
         throw new NotImplementedException();
     }

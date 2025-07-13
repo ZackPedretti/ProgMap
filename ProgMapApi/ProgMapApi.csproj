@@ -11,6 +11,7 @@
     <PackageReference Include="dotenv.net" Version="3.2.1" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
+    <PackageReference Include="Nominatim.API" Version="2.1.0" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.DependencyInjection" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />

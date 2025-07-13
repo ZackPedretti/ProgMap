@@ -6,11 +6,11 @@ public interface IDbHandler
 {
     public Task<string[]> GetAllBandNames();
 
-    public void InsertBands(Band[] bands);
+    public void InsertBands(Artist[] bands);
 
     public MinimalBandInformation[] GetAllBands();
     
-    public Band GetBand (MinimalBandInformation band); // By MinimalBandInformation
+    public Artist GetBand (MinimalBandInformation band); // By MinimalBandInformation
     
-    public Band GetBand (int band); // By ID
+    public Artist GetBand (int band); // By ID
 }
