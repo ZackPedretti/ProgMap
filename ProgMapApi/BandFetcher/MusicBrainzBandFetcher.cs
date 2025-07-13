@@ -1,14 +1,22 @@
 ﻿using MetaBrainz.MusicBrainz;
 using MbArtist = MetaBrainz.MusicBrainz.Interfaces.Entities.IArtist;
+using MetaBrainz.MusicBrainz.Interfaces.Searches;
 using ProgMapApi.utils;
 
 namespace ProgMapApi.BandFetcher;
 
 public class MusicBrainzBandFetcher :  IBandFetcher
 {
-    public Task<Artist[]> GetAllBands()
+    public async Task<Artist[]> GetAllBands()
     {
-        return GetBandsByKeyword("progressive metal");
+        return await GetBandsByKeywords(new[]
+        {
+            "prog",
+            "progressive metal",
+            "progressive rock",
+            "progressive jazz",
+            "progressive"
+        });
     }
 
     public async Task<Artist?> GetBandByName(string name)
@@ -43,10 +51,9 @@ public class MusicBrainzBandFetcher :  IBandFetcher
         
         List<Artist> artists = [];
         
-        var q = new Query();
-        var results = await q.FindArtistsAsync($"tag:\"{keyword}\"", limit: 100);
+        var results = await GetAllSearchResults($"tag:\"{keyword}\"");
 
-        artists.AddRange(results.Results.Select(result => result.Item)
+        artists.AddRange(results.Select(result => result.Item)
             .Select(BuildArtistFromArtistObject)
             .OfType<Artist>());
 
@@ -72,5 +79,34 @@ public class MusicBrainzBandFetcher :  IBandFetcher
             null,
             null
         );
+    }
+
+    private async Task<ISearchResult<MbArtist>[]> GetAllSearchResults(string query)
+    {
+        List<ISearchResult<MbArtist>> allResults = [];
+        
+        var q = new Query();
+        const int limit = 100;
+        IReadOnlyList<ISearchResult<MbArtist>> pageResults;
+
+        do
+        {
+            var results = await q.FindArtistsAsync(query, limit: limit, offset: allResults.Count);
+            pageResults = results.Results;
+            allResults.AddRange(pageResults);
+        } while (pageResults.Count == limit);
+
+        return allResults.ToArray();
+    }
+
+    private async Task<Artist[]> GetBandsByKeywords(string[] keywords)
+    {
+        List<Artist> artists = [];
+        foreach (var keyword in keywords)
+        {
+            var results = await GetBandsByKeyword(keyword);
+            artists.AddRange(results);
+        }
+        return artists.ToArray();
     }
 }
