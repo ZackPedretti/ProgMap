@@ -9,14 +9,13 @@ public class MusicBrainzBandFetcher :  IBandFetcher
 {
     public async Task<Artist[]> GetAllBands()
     {
-        return await GetBandsByKeywords(new[]
-        {
+        return await GetBandsByKeywords([
             "prog",
             "progressive metal",
             "progressive rock",
             "progressive jazz",
             "progressive"
-        });
+        ]);
     }
 
     public async Task<Artist?> GetBandByName(string name)
@@ -25,38 +24,22 @@ public class MusicBrainzBandFetcher :  IBandFetcher
         var results = await q.FindArtistsAsync(name);
 
         var artist = results.Results[0].Item;
-        var beginAreaString = artist.BeginArea?.ToString();
-        
-        if (artist.Name == null || beginAreaString == null || artist.Country == null)
-        {
-            return null;
-        }
-        
-        Console.WriteLine($"id: {artist.Id} \nName: {artist.Name}");
-
-        return new Artist(
-            artist.Id.ToString(),
-            artist.Name,
-            new Position(0, 0),
-            artist.Country,
-            beginAreaString,
-            null,
-            null,
-            null
-            );
+        return BuildArtistFromArtistObject(artist);
     }
 
     private async Task<Artist[]> GetBandsByKeyword(string keyword)
     {
         
-        List<Artist> artists = [];
+        HashSet<Artist> artists = [];
         
         var results = await GetAllSearchResults($"tag:\"{keyword}\"");
 
-        artists.AddRange(results.Select(result => result.Item)
-            .Select(BuildArtistFromArtistObject)
-            .OfType<Artist>());
-
+        foreach (var artist in results.Select(result => result.Item)
+                     .Select(BuildArtistFromArtistObject)
+                     .OfType<Artist>())
+        {
+            artists.Add(artist);
+        }
         return artists.ToArray();
     }
 
@@ -64,7 +47,7 @@ public class MusicBrainzBandFetcher :  IBandFetcher
     {
         var beginAreaString = artist.BeginArea?.ToString();
         
-        if (artist.Name == null || beginAreaString == null || artist.Country == null)
+        if (artist.Name == null || beginAreaString == null || artist.Country == null || artist.LifeSpan == null || artist.LifeSpan.Begin == null)
         {
             return null;
         }
@@ -75,9 +58,7 @@ public class MusicBrainzBandFetcher :  IBandFetcher
             new Position(0, 0),
             artist.Country,
             beginAreaString,
-            null,
-            null,
-            null
+            (int)((DateTimeOffset)artist.LifeSpan.Begin.NearestDate).ToUnixTimeSeconds()
         );
     }
 
@@ -101,11 +82,14 @@ public class MusicBrainzBandFetcher :  IBandFetcher
 
     private async Task<Artist[]> GetBandsByKeywords(string[] keywords)
     {
-        List<Artist> artists = [];
+        HashSet<Artist> artists = [];
         foreach (var keyword in keywords)
         {
             var results = await GetBandsByKeyword(keyword);
-            artists.AddRange(results);
+            foreach (var result in results)
+            {
+                artists.Add(result);
+            }
         }
         return artists.ToArray();
     }

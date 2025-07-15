@@ -1,5 +1,3 @@
-using ProgMapApi;
-using Npgsql;
 using dotenv.net;
 using ProgMapApi.DbHandler;
 using ProgMapApi.EndPoints;
@@ -20,6 +18,6 @@ var app = builder.Build();
 
 app.MapBandsEndpoints(dbHandler);
 app.MapUpdateEndpoint();
-// app.MapTestEndpoint();
+app.MapTestEndpoint();
 
 app.Run();
