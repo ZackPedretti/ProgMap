@@ -1,4 +1,4 @@
-﻿using ProgMapApi.utils;
+﻿using ProgMapApi.entities;
 
 namespace ProgMapApi.PositionFetcher;
 

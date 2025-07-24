@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using ProgMapApi.utils;
+using ProgMapApi.entities;
 
 namespace ProgMapApi.DbHandler;
 
